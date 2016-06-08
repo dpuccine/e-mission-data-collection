@@ -1,4 +1,4 @@
-package ch.supsi.dti.isin.obd;
+package ch.supsi.dti.e_missionconsumes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +12,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,10 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import ch.supsi.dti.isin.obd.carconnection.CarManager;
-import ch.supsi.dti.isin.obd.carconnection.ConnectionException;
-import edu.berkeley.eecs.cfc_tracker.R;
-import edu.berkeley.eecs.cfc_tracker.log.Log;
+import ch.supsi.dti.e_missionconsumes.carconnection.CarManager;
+import ch.supsi.dti.e_missionconsumes.carconnection.ConnectionException;
 
 
 /**
@@ -44,8 +43,8 @@ public class OBDActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_odb);
-        Log.d(this, this.getClass().getName(), "OBDActivity started");
+        setContentView(R.layout.activity_main);
+        Log.d(this.getClass().getName(), "OBDActivity started");
 
 
         if (mBound == false) {
@@ -78,7 +77,7 @@ public class OBDActivity extends Activity {
         try {
             if (DEV_NAME.length() == 0) return;
 
-            Log.d(OBDActivity.this, this.getClass().getName(), DEV_NAME);
+            Log.d(this.getClass().getName(), DEV_NAME);
 
             mService.connectToAdapter(DEV_NAME);
             //check fuel type
@@ -135,7 +134,7 @@ public class OBDActivity extends Activity {
                 } else {
 
                     mService.stopOBDRecording();
-                    OBDActivity.this.updateThread.RUN = false;
+                    ch.supsi.dti.e_missionconsumes.OBDActivity.this.updateThread.RUN = false;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -153,8 +152,8 @@ public class OBDActivity extends Activity {
 
     public void selectBTDevice() {
         DEV_NAME = "";
-        ArrayList deviceStrs = new ArrayList();
-        final ArrayList<String> devices = new ArrayList();
+        ArrayList<String> deviceStrs = new ArrayList<>();
+        final ArrayList<String> devices = new ArrayList<>();
 
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         // checking and enabling bluetooth
@@ -173,7 +172,7 @@ public class OBDActivity extends Activity {
 
             // show a list of paired devices to connect with
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(OBDActivity.this);
-            ArrayAdapter adapter = new ArrayAdapter(OBDActivity.this, android.R.layout.select_dialog_singlechoice,
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(OBDActivity.this, android.R.layout.select_dialog_singlechoice,
                     deviceStrs.toArray(new String[deviceStrs.size()]));
             alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
                 @Override
@@ -183,7 +182,7 @@ public class OBDActivity extends Activity {
                     String deviceAddress = devices.get(position);
 
                     DEV_NAME = deviceAddress;
-                    Log.d(OBDActivity.this, this.getClass().getName(), "BT=" + deviceAddress);
+                    Log.d(this.getClass().getName(), "BT=" + deviceAddress);
                     postBTselection();
 
 
@@ -263,7 +262,7 @@ public class OBDActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface d, int n) {
                         if (n != 0) {
-                            OBDActivity.this.fuelType = "Diesel";
+                            ch.supsi.dti.e_missionconsumes.OBDActivity.this.fuelType = "Diesel";
                         }
 
                     }
@@ -274,26 +273,26 @@ public class OBDActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 int sel = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                                 if (sel != 0) {
-                                    OBDActivity.this.fuelType = "Diesel";
+                                    ch.supsi.dti.e_missionconsumes.OBDActivity.this.fuelType = "Diesel";
                                 }
 
 
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mService.getCarManager().setFuelType(OBDActivity.this.fuelType);
+                                        mService.getCarManager().setFuelType(ch.supsi.dti.e_missionconsumes.OBDActivity.this.fuelType);
                                         TextView ftv = (TextView) findViewById(R.id.textViewFuelType);
                                         ftv.setTextColor(Color.GREEN);
-                                        if (OBDActivity.this.fuelType.compareTo("Gasoline") == 0)
+                                        if (ch.supsi.dti.e_missionconsumes.OBDActivity.this.fuelType.compareTo("Gasoline") == 0)
                                             ftv.setTextColor(Color.YELLOW);
-                                        ftv.setText(OBDActivity.this.fuelType);
+                                        ftv.setText(ch.supsi.dti.e_missionconsumes.OBDActivity.this.fuelType);
 
 
                                         mService.startOBDRecording();
 
 
-                                        OBDActivity.this.updateThread = new UpdateParametersThread();
-                                        new Thread(OBDActivity.this.updateThread).start();
+                                        ch.supsi.dti.e_missionconsumes.OBDActivity.this.updateThread = new UpdateParametersThread();
+                                        new Thread(ch.supsi.dti.e_missionconsumes.OBDActivity.this.updateThread).start();
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {

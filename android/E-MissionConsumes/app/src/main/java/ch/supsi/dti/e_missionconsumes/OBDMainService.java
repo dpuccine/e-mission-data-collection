@@ -1,15 +1,17 @@
-package ch.supsi.dti.isin.obd;
+package ch.supsi.dti.e_missionconsumes;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
 
-import ch.supsi.dti.isin.obd.carconnection.CarManager;
-import ch.supsi.dti.isin.obd.carconnection.ConnectionException;
+import ch.supsi.dti.e_missionconsumes.carconnection.CarManager;
+import ch.supsi.dti.e_missionconsumes.carconnection.ConnectionException;
+
 
 public class OBDMainService extends Service {
 
@@ -17,6 +19,7 @@ public class OBDMainService extends Service {
 
 
     public OBDMainService() {
+        Log.d("SHIT", "nothing works");
     }
 
 
