@@ -12,16 +12,12 @@ import java.util.HashMap;
 import ch.supsi.dti.e_missionconsumes.carconnection.CarManager;
 import ch.supsi.dti.e_missionconsumes.carconnection.ConnectionException;
 
-
 public class OBDMainService extends Service {
-
     private CarManager carManager = null;
-
 
     public OBDMainService() {
         Log.d("SHIT", "nothing works");
     }
-
 
     public CarManager getCarManager() {
         return this.carManager;
@@ -29,41 +25,35 @@ public class OBDMainService extends Service {
 
     public void onCreate() {
         super.onCreate();
-        if (this.carManager == null) this.carManager = new CarManager();
+        if (this.carManager == null) {
+            this.carManager = new CarManager();
+        }
     }
-
 
     private final IBinder mBinder = new LocalBinder();
 
-
     public void connectToAdapter(String dev) throws ConnectionException {
-
         this.carManager.connectToAdapter(dev);
         Toast.makeText(getApplicationContext(), "Connected to:" + dev, Toast.LENGTH_SHORT).show();
     }
 
-
     public void startOBDRecording() {
         // carManager.connectToAdapter(dev);
-
-
         RecordingThread.startRecording(this);
         Toast.makeText(getApplicationContext(), "Start recording", Toast.LENGTH_SHORT).show();
-
     }
-
 
     public void stopOBDRecording() {
         RecordingThread.stopRecording();
-        this.carManager.disconnectToCar();
+        this.carManager.disconnectFromCar();
         Toast.makeText(getApplicationContext(), "Stop recording", Toast.LENGTH_SHORT).show();
-
     }
-
 
     public HashMap<String, String> currentValues() throws NoValueException {
         HashMap<String, String> ct = RecordingThread.getCurrent();
-        if (ct == null) throw new NoValueException();
+        if (ct == null) {
+            throw new NoValueException();
+        }
         return ct;
     }
 
@@ -78,11 +68,9 @@ public class OBDMainService extends Service {
     }
 
     public class LocalBinder extends Binder {
-
         public OBDMainService getService() {
             // Return this instance of LocalService so clients can call public methods
             return OBDMainService.this;
         }
     }
-
 }
